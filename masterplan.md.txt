@@ -1,0 +1,770 @@
+# 📄 OJT Monitoring System — Master Execution Plan
+
+> **How to use this file:** Copy the entire content below and save it as `MASTER-EXECUTION-PLAN.md` in your project repository (e.g., inside the `/docs` folder). You can open it in VS Code, GitHub, Obsidian, or any Markdown viewer. If you need a Word or PDF version, paste it into [StackEdit](https://stackedit.io) or [Dillinger.io](https://dillinger.io) and export.
+
+---
+
+```markdown
+# 🎯 MASTER EXECUTION PLAN
+## OJT Monitoring System — AI Assistant Instruction Manual & Phase-by-Phase Blueprint
+
+**Document Version:** 1.0
+**Project:** OJT Monitoring System
+**Stack:** Supabase (PostgreSQL) + Backend API + Frontend
+**Purpose:** A single source of truth for the AI assistant and development team to execute all tasks correctly.
+
+---
+
+## 📜 PART 0: THE AI ASSISTANT'S PRIME DIRECTIVE
+
+### 🔒 Non-Negotiable Rules
+
+| # | Rule | Rationale |
+| :--- | :--- | :--- |
+| 1 | Never modify the database schema without explicit approval. | Schema changes break existing code. |
+| 2 | Always use parameterized queries. | Prevent SQL injection. |
+| 3 | Never store plaintext passwords. | Always use bcrypt/argon2 hashing. |
+| 4 | Follow the exact table/column names from the Data Dictionary. | Consistency prevents runtime errors. |
+| 5 | Every API endpoint must validate input before touching the DB. | Prevent bad data. |
+| 6 | Every response must include proper HTTP status codes (200, 201, 400, 401, 403, 404, 500). | Standard REST practice. |
+| 7 | Enforce role-based access on EVERY endpoint. | Security-first design. |
+| 8 | Never expose the Supabase `service_role` key in frontend code. | Critical security breach. |
+| 9 | Test every query in Supabase SQL Editor before writing backend code. | Verify logic works. |
+| 10 | Log every error with sufficient context. | Debuggability. |
+| 11 | If requirements are ambiguous, STOP and ask. | Never assume. |
+| 12 | Every deliverable must be documented in Markdown. | Reproducibility. |
+
+### 🎨 Coding Conventions
+
+| Aspect | Convention |
+| :--- | :--- |
+| Database tables | `snake_case` (e.g., `placement_requirements`) |
+| API endpoints | `kebab-case` (e.g., `/api/placement-requirements`) |
+| Environment variables | `UPPER_SNAKE_CASE` (e.g., `SUPABASE_URL`) |
+| Files | `kebab-case.js` (e.g., `auth-controller.js`) |
+| Git commits | Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`) |
+| Branches | `feature/`, `bugfix/`, `hotfix/` |
+
+---
+
+## 🗺️ PART 1: PROJECT PHASES OVERVIEW
+
+| Phase | Name | Duration | Focus |
+| :--- | :--- | :--- | :--- |
+| 0 | Foundation & Setup | 2 days | Environment, tools, repos |
+| 1 | Database Implementation | 3 days | Supabase schema + seed data |
+| 2 | Authentication Module | 5 days | Login, RBAC, sessions |
+| 3 | User Management Module | 4 days | Admin CRUD for users |
+| 4 | Company & Department Module | 5 days | Company/dept CRUD |
+| 5 | Placement Module | 6 days | Placement lifecycle |
+| 6 | Progress Tracking Module | 7 days | Requirements, hours, uploads |
+| 7 | Evaluation Module | 6 days | Grading, scoring, feedback |
+| 8 | Reports & Dashboards | 5 days | Analytics, charts, exports |
+| 9 | Testing & QA | 4 days | Unit, integration, UAT |
+| 10 | Deployment & Documentation | 4 days | Production, final docs |
+
+**Total:** ~51 working days (≈ 10 weeks)
+
+---
+
+## 📦 PHASE 0: FOUNDATION & SETUP (2 Days)
+
+### 🎯 Objective
+Establish all tools, accounts, and repositories so every subsequent phase can proceed without blockers.
+
+### 🔧 Tasks
+
+#### Task 0.1 — Create Accounts
+- [ ] Supabase account (supabase.com)
+- [ ] GitHub account
+- [ ] Vercel account (frontend deploy)
+- [ ] Render or Railway account (backend deploy)
+
+#### Task 0.2 — Install Local Tools
+- Node.js LTS (20+)
+- npm / yarn
+- Git
+- VS Code
+- Postman / Thunder Client
+
+#### Task 0.3 — Repository Structure
+```
+ojt-monitoring-system/
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── utils/
+│   ├── .env.example
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── contexts/
+│   │   └── utils/
+│   ├── .env.example
+│   └── package.json
+├── database/
+│   ├── 01-schema.sql
+│   ├── 02-seed.sql
+│   └── 03-views.sql
+├── docs/
+│   ├── ERD.md
+│   ├── data-dictionary.md
+│   ├── api-reference.md
+│   └── user-manual.md
+├── .gitignore
+└── README.md
+```
+
+#### Task 0.4 — Create Supabase Project
+- Name: `ojt-monitoring-system`
+- Region: Closest to users
+- Save DB password
+- Copy: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`
+
+#### Task 0.5 — Environment Files
+
+`backend/.env.example`
+```env
+PORT=5000
+NODE_ENV=development
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+JWT_SECRET=generate_a_long_random_string
+JWT_EXPIRES_IN=7d
+```
+
+`frontend/.env.example`
+```env
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+#### Task 0.6 — Initialize Git
+```bash
+git init
+git remote add origin https://github.com/yourname/ojt-monitoring-system.git
+git add .
+git commit -m "chore: initial project setup"
+git push -u origin main
+```
+
+#### Task 0.7 — Create Storage Buckets
+- `requirement-files` (private)
+- `profile-pictures` (public)
+
+### 🚦 Exit Criteria
+- Git push succeeds.
+- Supabase project is Active.
+- Local environment ready.
+
+### 📸 Evidence
+- Screenshot of Supabase project dashboard.
+- Screenshot of GitHub repo folder structure.
+
+---
+
+## 🗄️ PHASE 1: DATABASE IMPLEMENTATION (3 Days)
+
+### 🎯 Objective
+Deploy the complete 13-table schema, populate with seed data, and verify all relationships.
+
+### 🔧 Tasks
+
+#### Task 1.1 — Run DDL Script
+Open Supabase → SQL Editor → Paste schema → Run.
+
+#### Task 1.2 — Verify 13 Tables
+Navigate to Table Editor. Confirm:
+`users`, `students`, `faculty`, `companies`, `company_departments`, `school_departments`, `placements`, `requirements`, `placement_requirements`, `work_schedules`, `evaluations`, `evaluation_criteria`, `evaluation_scores`.
+
+#### Task 1.3 — Run Seed Script
+Idempotent version with `ON CONFLICT DO NOTHING`.
+
+#### Task 1.4 — Verification Query
+```sql
+SELECT 'users' AS t, COUNT(*) FROM users
+UNION ALL SELECT 'students', COUNT(*) FROM students
+UNION ALL SELECT 'faculty', COUNT(*) FROM faculty
+UNION ALL SELECT 'companies', COUNT(*) FROM companies
+UNION ALL SELECT 'company_departments', COUNT(*) FROM company_departments
+UNION ALL SELECT 'school_departments', COUNT(*) FROM school_departments
+UNION ALL SELECT 'placements', COUNT(*) FROM placements
+UNION ALL SELECT 'requirements', COUNT(*) FROM requirements
+UNION ALL SELECT 'placement_requirements', COUNT(*) FROM placement_requirements
+UNION ALL SELECT 'work_schedules', COUNT(*) FROM work_schedules
+UNION ALL SELECT 'evaluations', COUNT(*) FROM evaluations
+UNION ALL SELECT 'evaluation_criteria', COUNT(*) FROM evaluation_criteria
+UNION ALL SELECT 'evaluation_scores', COUNT(*) FROM evaluation_scores;
+```
+
+#### Task 1.5 — Create Views
+```sql
+CREATE OR REPLACE VIEW v_student_placements AS
+SELECT 
+    p.id AS placement_id,
+    u.full_name AS student_name,
+    s.student_number,
+    s.course,
+    s.year_level,
+    uf.full_name AS faculty_supervisor,
+    c.name AS company_name,
+    cd.department_name AS company_department,
+    p.start_date, p.end_date, p.status, p.deployment_type
+FROM placements p
+JOIN students s ON p.student_id = s.id
+JOIN users u ON s.user_id = u.id
+JOIN faculty f ON p.faculty_id = f.id
+JOIN users uf ON f.user_id = uf.id
+LEFT JOIN company_departments cd ON p.company_department_id = cd.id
+LEFT JOIN companies c ON cd.company_id = c.id;
+
+CREATE OR REPLACE VIEW v_placement_progress AS
+SELECT 
+    p.id AS placement_id,
+    COUNT(DISTINCT pr.id) AS total_requirements,
+    COUNT(DISTINCT pr.id) FILTER (WHERE pr.status = 'approved') AS approved_requirements,
+    COALESCE(SUM(ws.total_hours), 0) AS total_hours_logged
+FROM placements p
+LEFT JOIN placement_requirements pr ON p.id = pr.placement_id
+LEFT JOIN work_schedules ws ON p.id = ws.placement_id
+GROUP BY p.id;
+```
+
+#### Task 1.6 — Trigger for verified_at
+```sql
+CREATE OR REPLACE FUNCTION update_verified_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.status IN ('approved', 'rejected') AND OLD.status != NEW.status THEN
+        NEW.verified_at = NOW();
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_placement_requirements_verified
+BEFORE UPDATE ON placement_requirements
+FOR EACH ROW
+EXECUTE FUNCTION update_verified_at();
+```
+
+### 🚦 Exit Criteria
+- All 13 tables exist with correct row counts.
+- Schema Visualizer matches ERD.
+- FK constraints prevent invalid inserts.
+
+### 📸 Evidence
+- Screenshot of Table Editor (13 tables).
+- Screenshot of Schema Visualizer.
+- Screenshot of a failed insert test.
+
+---
+
+## 🔐 PHASE 2: AUTHENTICATION MODULE (5 Days)
+
+### 🎯 Objective
+Secure login, logout, session handling, and role-based access control.
+
+### 🔧 Tasks
+
+#### Task 2.1 — Backend Setup
+```bash
+cd backend
+npm init -y
+npm install express cors dotenv bcryptjs jsonwebtoken @supabase/supabase-js
+npm install --save-dev nodemon
+```
+
+#### Task 2.2 — Supabase Client (`src/config/supabase.js`)
+```javascript
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+module.exports = supabase;
+```
+
+#### Task 2.3 — Auth Endpoints
+| Method | Endpoint | Purpose |
+| :--- | :--- | :--- |
+| POST | `/api/auth/register` | Admin creates user |
+| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/logout` | Invalidate session |
+| GET | `/api/auth/me` | Get current user |
+
+#### Task 2.4 — Auth Middleware
+- `authenticate`: verify JWT, attach user to req.
+- `authorize(...roles)`: check role permission.
+
+#### Task 2.5 — Frontend Auth Context
+- Store `user` and `token` in state.
+- Persist to localStorage.
+- Provide `login()`, `logout()`, `useAuth()`.
+
+#### Task 2.6 — Login Page
+- Email + password form.
+- Redirect based on role:
+  - `admin` → `/admin/dashboard`
+  - `student` → `/student/dashboard`
+  - `faculty` → `/faculty/dashboard`
+
+#### Task 2.7 — Protected Route Component
+```jsx
+<ProtectedRoute allowedRoles={['admin']}>
+    <AdminDashboard />
+</ProtectedRoute>
+```
+
+### 🚦 Exit Criteria
+- Login works for all 3 roles.
+- Invalid credentials return 401.
+- Non-admin cannot access admin routes.
+- Token persists across refresh.
+
+### 📸 Evidence
+- Postman screenshots of auth tests.
+- Screenshot of login page and dashboard.
+
+---
+
+## 👥 PHASE 3: USER MANAGEMENT MODULE (4 Days)
+
+### 🔧 Tasks
+
+#### Task 3.1 — User Endpoints
+| Method | Endpoint | Role |
+| :--- | :--- | :--- |
+| GET | `/api/users` | admin |
+| GET | `/api/users/:id` | admin, self |
+| PUT | `/api/users/:id` | admin, self |
+| DELETE | `/api/users/:id` | admin |
+| GET | `/api/students` | admin, faculty |
+| GET | `/api/faculty` | admin |
+
+#### Task 3.2 — Validation Rules
+- Email: valid + unique
+- Password: min 8, 1 upper, 1 number
+- Student/Employee number: unique, alphanumeric
+- Year level: 1–6
+
+#### Task 3.3 — Pagination
+`?page=1&limit=10&search=john&role=student`
+
+#### Task 3.4 — Admin UI
+- User table (Name, Email, Role, Status, Actions)
+- Search, filter, pagination
+- Add User modal
+- Edit/Delete actions
+
+### 🚦 Exit Criteria
+- Admin can CRUD users.
+- Search + filter + pagination work.
+- Students/faculty blocked from admin routes.
+
+---
+
+## 🏢 PHASE 4: COMPANY & DEPARTMENT MODULE (5 Days)
+
+### 🔧 Tasks
+
+#### Task 4.1 — Endpoints
+| Method | Endpoint |
+| :--- | :--- |
+| GET/POST | `/api/companies` |
+| GET/PUT/DELETE | `/api/companies/:id` |
+| GET/POST | `/api/companies/:id/departments` |
+| PUT/DELETE | `/api/departments/:id` |
+| GET/POST | `/api/school-departments` |
+
+#### Task 4.2 — Frontend Pages
+- Company list (table, search, add)
+- Company detail (info + departments)
+- School departments page
+
+### 🚦 Exit Criteria
+- Admin can manage companies + departments.
+- Deleting a company cascades to departments.
+
+---
+
+## 📋 PHASE 5: PLACEMENT MODULE (6 Days)
+
+### 🔧 Tasks
+
+#### Task 5.1 — Placement Endpoints
+| Method | Endpoint | Role |
+| :--- | :--- | :--- |
+| GET | `/api/placements` | admin, faculty |
+| POST | `/api/placements` | admin |
+| GET | `/api/placements/:id` | all with access |
+| PUT | `/api/placements/:id` | admin |
+| PATCH | `/api/placements/:id/status` | admin, faculty |
+| DELETE | `/api/placements/:id` | admin |
+| GET | `/api/placements/my` | student |
+
+#### Task 5.2 — Auto-populate Requirements
+```javascript
+async function createPlacement(data) {
+    const { data: placement } = await supabase
+        .from('placements').insert(data).select().single();
+
+    const { data: requirements } = await supabase
+        .from('requirements').select('id').eq('is_required', true);
+
+    const prRows = requirements.map(r => ({
+        placement_id: placement.id,
+        requirement_id: r.id,
+        status: 'pending'
+    }));
+
+    await supabase.from('placement_requirements').insert(prRows);
+    return placement;
+}
+```
+
+#### Task 5.3 — Business Rules
+| Rule | Check |
+| :--- | :--- |
+| No 2 active placements per student | Query check |
+| `company` type requires department ID | DB CHECK + code |
+| `school` type requires school dept ID | DB CHECK + code |
+| Start date < end date | Code validation |
+
+#### Task 5.4 — Frontend Wizard
+3-step: Select Student → Select Company/Dept + Faculty → Set Dates.
+
+### 🚦 Exit Criteria
+- Admin creates placements.
+- Requirements auto-populate.
+- Business rules prevent invalid data.
+
+---
+
+## 📊 PHASE 6: PROGRESS TRACKING MODULE (7 Days)
+
+### 🔧 Tasks
+
+#### Task 6.1 — Requirement Submission Endpoints
+| Method | Endpoint | Role |
+| :--- | :--- | :--- |
+| GET | `/api/placements/:id/requirements` | all with access |
+| POST | `/api/placement-requirements/:id/upload` | student |
+| PATCH | `/api/placement-requirements/:id/verify` | faculty |
+
+#### Task 6.2 — Upload Flow
+1. File → Supabase Storage (`requirement-files`).
+2. Get path/URL.
+3. Update `placement_requirements` (status=`submitted`, file_path, submitted_at).
+
+#### Task 6.3 — Verify Flow
+1. Faculty clicks Approve/Reject.
+2. Update status, verified_by, verified_at, remarks.
+
+#### Task 6.4 — Work Schedule Endpoints
+| Method | Endpoint | Role |
+| :--- | :--- | :--- |
+| GET | `/api/placements/:id/schedules` | all with access |
+| POST | `/api/placements/:id/schedules` | student |
+| PUT/DELETE | `/api/schedules/:id` | student (own) |
+
+#### Task 6.5 — Auto-compute Hours
+```javascript
+const start = new Date(`1970-01-01T${start_time}`);
+const end = new Date(`1970-01-01T${end_time}`);
+const totalHours = (end - start) / (1000 * 60 * 60);
+```
+
+#### Task 6.6 — Progress Summary
+`GET /api/placements/:id/progress` returns requirements counts + hours + status.
+
+#### Task 6.7 — Frontend UIs
+- Student: upload UI, time log calendar, progress widgets.
+- Faculty: verification table with file preview modal.
+- Admin: placement progress overview.
+
+### 🚦 Exit Criteria
+- Upload + verify workflow works end-to-end.
+- Hours compute correctly.
+- Progress matches DB.
+
+---
+
+## 📝 PHASE 7: EVALUATION MODULE (6 Days)
+
+### 🔧 Tasks
+
+#### Task 7.1 — Evaluation Endpoints
+| Method | Endpoint | Role |
+| :--- | :--- | :--- |
+| GET | `/api/evaluations` | admin, faculty |
+| POST | `/api/evaluations` | faculty |
+| GET | `/api/evaluations/:id` | all with access |
+| PUT | `/api/evaluations/:id` | faculty (own) |
+| PATCH | `/api/evaluations/:id/finalize` | faculty |
+| DELETE | `/api/evaluations/:id` | faculty (drafts) |
+
+#### Task 7.2 — Score Submission
+When creating an evaluation, insert scores per criterion into `evaluation_scores`.
+
+#### Task 7.3 — Score Computation
+```sql
+SELECT 
+    e.id,
+    SUM(es.score) AS total,
+    SUM(ec.max_score) AS max,
+    ROUND((SUM(es.score)::DECIMAL / SUM(ec.max_score)) * 100, 2) AS percentage
+FROM evaluations e
+JOIN evaluation_scores es ON e.id = es.evaluation_id
+JOIN evaluation_criteria ec ON es.criterion_id = ec.id
+WHERE e.id = ?
+GROUP BY e.id;
+```
+
+#### Task 7.4 — Frontend UI
+- Faculty: evaluation form (criteria + scores + remarks), Save Draft, Finalize.
+- Student: read-only view of finalized evaluations.
+
+### 🚦 Exit Criteria
+- Faculty creates + finalizes evaluations.
+- Students only see finalized ones.
+- Scores sum correctly.
+
+---
+
+## 📈 PHASE 8: REPORTS & DASHBOARDS (5 Days)
+
+### 🔧 Tasks
+
+#### Task 8.1 — Analytics Endpoints
+- Total students, faculty, companies, active placements.
+- Placements by company.
+- Completion rate.
+- Average evaluation score.
+
+#### Task 8.2 — Admin Dashboard
+- KPI cards.
+- Charts (bar, pie, line).
+- Recent activity table.
+
+#### Task 8.3 — Student Dashboard
+- Placement status.
+- Requirements progress.
+- Hours progress.
+- Latest evaluation.
+
+#### Task 8.4 — Faculty Dashboard
+- Assigned students list.
+- Pending verifications.
+- Pending evaluations.
+
+#### Task 8.5 — Export
+- PDF (via `pdfkit` or client-side `jspdf`).
+- Excel (via `xlsx`).
+
+### 🚦 Exit Criteria
+- Dashboards load with real data.
+- Exports generate valid files.
+
+---
+
+## 🧪 PHASE 9: TESTING & QA (4 Days)
+
+### 🔧 Tasks
+
+#### Task 9.1 — Unit Tests
+- Controllers, services, utilities.
+- Coverage target: 80%.
+
+#### Task 9.2 — Integration Tests
+- End-to-end API flows.
+- Auth → Placement → Progress → Evaluation.
+
+#### Task 9.3 — UAT
+- Real users test the system.
+- Log bugs in GitHub Issues.
+
+#### Task 9.4 — Security Tests
+- SQL injection attempts.
+- Unauthorized access attempts.
+- File upload validation (size, type).
+
+### 🚦 Exit Criteria
+- All critical tests pass.
+- No P0/P1 bugs open.
+
+---
+
+## 🚀 PHASE 10: DEPLOYMENT & DOCUMENTATION (4 Days)
+
+### 🔧 Tasks
+
+#### Task 10.1 — Backend Deployment
+- Deploy to Render / Railway.
+- Set environment variables.
+- Test production endpoints.
+
+#### Task 10.2 — Frontend Deployment
+- Deploy to Vercel / Netlify.
+- Set environment variables.
+- Test production UI.
+
+#### Task 10.3 — Domain + SSL
+- Configure custom domain (optional).
+- Verify HTTPS.
+
+#### Task 10.4 — Final Documentation
+- Chapter 1: Introduction
+- Chapter 2: RRL
+- Chapter 3: Methodology + ERD + Data Dictionary
+- Chapter 4: System Design (DFD, Use Case)
+- Chapter 5: Implementation + Screenshots
+
+#### Task 10.5 — User Manual
+- Admin manual.
+- Student manual.
+- Faculty manual.
+
+### 🚦 Exit Criteria
+- System is live and accessible.
+- Documentation is complete.
+- Users can perform core workflows.
+
+---
+
+## 📊 MASTER CHECKLIST
+
+### Phase 0 — Foundation
+- [ ] Supabase project
+- [ ] GitHub repo
+- [ ] Local environment
+- [ ] Storage buckets
+
+### Phase 1 — Database
+- [ ] 13 tables deployed
+- [ ] Seed data inserted
+- [ ] Views + triggers
+- [ ] Evidence captured
+
+### Phase 2 — Auth
+- [ ] Login/logout working
+- [ ] JWT + RBAC
+- [ ] Frontend login
+- [ ] Protected routes
+
+### Phase 3 — Users
+- [ ] User CRUD
+- [ ] Search + pagination
+- [ ] Admin UI
+
+### Phase 4 — Companies
+- [ ] Company CRUD
+- [ ] Department CRUD
+- [ ] Admin UI
+
+### Phase 5 — Placements
+- [ ] Placement CRUD
+- [ ] Auto-populate requirements
+- [ ] Business rules
+- [ ] Wizard UI
+
+### Phase 6 — Progress
+- [ ] Upload + verify
+- [ ] Time log
+- [ ] Progress summary
+- [ ] UIs
+
+### Phase 7 — Evaluations
+- [ ] Evaluation CRUD
+- [ ] Score submission
+- [ ] Finalize flow
+- [ ] UIs
+
+### Phase 8 — Reports
+- [ ] Analytics API
+- [ ] Dashboards
+- [ ] Exports
+
+### Phase 9 — Testing
+- [ ] Unit tests
+- [ ] Integration tests
+- [ ] UAT
+- [ ] Security tests
+
+### Phase 10 — Deployment
+- [ ] Backend live
+- [ ] Frontend live
+- [ ] Documentation
+- [ ] User manual
+
+---
+
+## 🎓 FINAL REMINDERS
+
+1. **Never skip a phase.** Each depends on the previous.
+2. **Commit often.** Every task = 1 commit.
+3. **Screenshot as you go.** Don't wait until the end.
+4. **Test in Postman before building UI.** Saves hours of debugging.
+5. **Document decisions.** Future you will thank present you.
+6. **Ask when unsure.** Ambiguity = bugs.
+7. **Deploy early.** Deploy to staging after Phase 5.
+
+---
+
+**END OF DOCUMENT**
+
+*Version 1.0 | Maintained by: [Your Name] | Last updated: [Date]*
+```
+
+---
+
+## 📥 How to Export This as a `.md` File
+
+### Option 1: Manual (Simplest)
+1. Open **Notepad** or **VS Code**.
+2. Copy everything inside the code block above (from `# 🎯 MASTER EXECUTION PLAN` to `END OF DOCUMENT`).
+3. Save as `MASTER-EXECUTION-PLAN.md` in your `/docs` folder.
+
+### Option 2: From GitHub
+1. Go to your repo → `docs/` folder.
+2. Click **Add file → Create new file**.
+3. Name it `MASTER-EXECUTION-PLAN.md`.
+4. Paste the content → **Commit**.
+
+### Option 3: Convert to PDF/DOCX
+1. Copy the Markdown.
+2. Go to [StackEdit](https://stackedit.io) or [Dillinger.io](https://dillinger.io).
+3. Paste → Click **Export as → PDF/HTML/DOCX**.
+
+### Option 4: VS Code Preview
+1. Save the file as `.md`.
+2. Open in VS Code.
+3. Press `Ctrl + Shift + V` to preview.
+4. Right-click preview → **Print → Save as PDF**.
+
+---
+
+## ✅ What to Do Next
+
+Once this file is in your repo:
+
+1. **Feed this to your AI assistant** as the system prompt for every session.
+2. **Check off tasks** as you complete them.
+3. **Update the version number** when you make changes.
+4. **Screenshot everything** for your final documentation.
+
+Would you like me to now generate:
+- **Part 2** of this document (Phases 8–10 in full detail)?
+- The **Use Case Diagram** and **Data Flow Diagram** for your documentation?
+- The **full backend starter code** for Phase 2 (Authentication)?
+
+Just say the word. 🚀
