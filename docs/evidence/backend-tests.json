@@ -1,0 +1,10 @@
+{
+  "verifiedAt": "2026-10-20T03:58:05.035Z",
+  "node": "v22.18.0",
+  "command": "npm test --prefix backend",
+  "exitCode": 0,
+  "tests": 35,
+  "passed": 35,
+  "failed": 0,
+  "durationMs": 41442.2526
+}

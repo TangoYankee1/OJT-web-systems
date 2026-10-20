@@ -1,0 +1,33 @@
+{
+  "measuredAt": "2026-10-20T03:43:07.204Z",
+  "fixture": {
+    "placements": 1000,
+    "dutyLogs": 10000,
+    "minutes": 600000
+  },
+  "targetMs": 500,
+  "measurements": {
+    "list": {
+      "samples": 5,
+      "medianMs": 176.26,
+      "maxMs": 467.87
+    },
+    "dashboard": {
+      "samples": 5,
+      "medianMs": 76.91,
+      "maxMs": 107.15
+    }
+  },
+  "targetMet": true,
+  "explain": [
+    {
+      "table": "p",
+      "type": "ref",
+      "possibleKeys": "ix_placement_term",
+      "key": "ix_placement_term",
+      "rows": "1000",
+      "extra": "Using where; Using index"
+    }
+  ],
+  "scope": "localhost synthetic demonstration; not institutional load acceptance"
+}

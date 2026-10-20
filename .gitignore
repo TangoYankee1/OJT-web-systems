@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+!.env.test.example
+storage/private/*
+!storage/private/.gitkeep
+storage/test-private/
+backups/
+*.log
+*.sql.gz
+test-results/
+playwright-report/
+docs/evidence/private/
+.tools/
+backend/tests/.temp-storage-*/

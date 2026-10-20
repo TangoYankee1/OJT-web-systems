@@ -1,0 +1,66 @@
+CREATE TABLE placements (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  student_id INT UNSIGNED NOT NULL,
+  faculty_id INT UNSIGNED NOT NULL,
+  supervisor_id INT UNSIGNED NULL,
+  academic_term_id INT UNSIGNED NOT NULL,
+  deployment_type VARCHAR(10) NOT NULL CHECK (deployment_type IN ('company','school')),
+  company_department_id INT UNSIGNED NULL,
+  school_department_id INT UNSIGNED NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  required_minutes INT UNSIGNED NOT NULL CHECK (required_minutes > 0),
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','active','completed','rejected','cancelled')),
+  status_remarks TEXT NULL,
+  created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3), updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  live_student_id INT UNSIGNED GENERATED ALWAYS AS (CASE WHEN status IN ('pending','approved','active') THEN student_id ELSE NULL END) PERSISTENT,
+  UNIQUE KEY uq_live_student (live_student_id),
+  KEY ix_placement_faculty (faculty_id,status),
+  KEY ix_placement_supervisor (supervisor_id,status),
+  KEY ix_placement_student (student_id,status),
+  KEY ix_placement_term (academic_term_id,status),
+  KEY ix_placement_company (company_department_id),
+  KEY ix_placement_school (school_department_id),
+  CONSTRAINT fk_placement_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_placement_faculty FOREIGN KEY (faculty_id) REFERENCES faculty(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_placement_supervisor FOREIGN KEY (supervisor_id) REFERENCES company_supervisors(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_placement_term FOREIGN KEY (academic_term_id) REFERENCES academic_terms(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_placement_company FOREIGN KEY (company_department_id) REFERENCES company_departments(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_placement_school FOREIGN KEY (school_department_id) REFERENCES school_departments(id) ON DELETE RESTRICT,
+  CONSTRAINT chk_placement_dates CHECK (end_date >= start_date),
+  CONSTRAINT chk_placement_host CHECK ((deployment_type='company' AND company_department_id IS NOT NULL AND school_department_id IS NULL) OR (deployment_type='school' AND school_department_id IS NOT NULL AND company_department_id IS NULL AND supervisor_id IS NULL))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE requirements (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(40) NOT NULL UNIQUE,
+  title VARCHAR(180) NOT NULL,
+  description TEXT NOT NULL,
+  stage VARCHAR(20) NOT NULL CHECK (stage IN ('pre_deployment','ongoing','completion')),
+  is_required TINYINT(1) NOT NULL DEFAULT 1 CHECK (is_required IN (0,1)),
+  is_active TINYINT(1) NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
+  created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3), updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE placement_requirements (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  placement_id INT UNSIGNED NOT NULL,
+  requirement_id INT UNSIGNED NOT NULL,
+  title_snapshot VARCHAR(180) NOT NULL,
+  stage_snapshot VARCHAR(20) NOT NULL CHECK (stage_snapshot IN ('pre_deployment','ongoing','completion')),
+  is_required_snapshot TINYINT(1) NOT NULL CHECK (is_required_snapshot IN (0,1)),
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','submitted','approved','rejected')),
+  current_upload_id INT UNSIGNED NULL,
+  submitted_at DATETIME(3) NULL,
+  verified_by INT UNSIGNED NULL,
+  verified_at DATETIME(3) NULL,
+  remarks TEXT NULL,
+  created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3), updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  UNIQUE KEY uq_placement_requirement (placement_id,requirement_id),
+  KEY ix_pr_requirement (requirement_id),
+  KEY ix_pr_reviewer (verified_by),
+  CONSTRAINT fk_requirement_placement FOREIGN KEY (placement_id) REFERENCES placements(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_requirement_template FOREIGN KEY (requirement_id) REFERENCES requirements(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_requirement_reviewer FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

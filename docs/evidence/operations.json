@@ -1,0 +1,16 @@
+{
+  "verifiedAt": "2026-10-20T03:56:51.373Z",
+  "databaseRestart": true,
+  "recordsPersisted": true,
+  "counts": {
+    "migrations": 6,
+    "placements": 6,
+    "privateFiles": 12,
+    "approvedMinutes": "2880"
+  },
+  "localReleaseNpmStart": true,
+  "sameOrigin": "http://localhost:5000",
+  "spaRefreshHtml": true,
+  "unknownApiRemainsJson": true,
+  "releaseReadiness": true
+}

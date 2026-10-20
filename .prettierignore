@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.tools/
+backend/.env*
+frontend/.env*
+code.html
+MASTER-EXECUTION-PLAN-XAMPP.md
+AI-IMPLEMENTATION-SPEC.md
+DESIGN.md
+masterplan.md.txt

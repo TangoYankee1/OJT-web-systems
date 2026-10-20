@@ -1,0 +1,10 @@
+-- Run once against an empty local development installation using a DB administrator.
+-- Replace ALL password placeholders. Do not run this file with unchanged placeholders.
+CREATE DATABASE ojt_monitoring CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'ojt_app'@'127.0.0.1' IDENTIFIED BY 'REPLACE_WITH_RANDOM_RUNTIME_PASSWORD';
+CREATE USER 'ojt_migrate'@'127.0.0.1' IDENTIFIED BY 'REPLACE_WITH_DIFFERENT_MIGRATION_PASSWORD';
+GRANT SELECT,INSERT,UPDATE,DELETE ON ojt_monitoring.* TO 'ojt_app'@'127.0.0.1';
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,ALTER,INDEX,REFERENCES ON ojt_monitoring.* TO 'ojt_migrate'@'127.0.0.1';
+-- Repeat with a distinct runtime user and ojt_monitoring_test for tests.
+-- Isolated auth tests/restore drill need a test-only DB administrator capable of creating/dropping their own isolated test DB and user.
+

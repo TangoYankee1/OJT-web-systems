@@ -1,0 +1,16 @@
+{
+  "verifiedAt": "2026-10-20T03:56:57.192Z",
+  "sourceDatabase": "ojt_monitoring_test",
+  "restoredDatabase": "ojt_restore_c9efe2be52_test",
+  "migrationsMatched": 6,
+  "fileChecksumsMatched": 12,
+  "placementCountMatched": 6,
+  "sessionsInvalidated": true,
+  "resetTokensInvalidated": true,
+  "login": true,
+  "completedPlacement": true,
+  "approvedMinutes": 480,
+  "finalizedEvaluations": 2,
+  "finalGradePercent": 81,
+  "authorizedDownload": true
+}

@@ -1,0 +1,18 @@
+{
+  "verifiedAt": "2026-10-20T03:53:01.114Z",
+  "command": "npm run test:e2e --prefix frontend",
+  "tests": 2,
+  "passed": 2,
+  "failed": 0,
+  "checks": [
+    "Full company and school UI workflows",
+    "All four roles and forced password change",
+    "Session refresh, logout and route guards",
+    "CSV download",
+    "Keyboard focus, Escape and focus return",
+    "Empty/error/retry states",
+    "390px mobile width and navigation",
+    "API JSON 404 and SPA fallback"
+  ],
+  "mobileScreenshotWidth": 390
+}

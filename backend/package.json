@@ -1,0 +1,44 @@
+{
+  "name": "ojt-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.12.0 <25"
+  },
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "db:check": "node scripts/check-db.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed": "node scripts/seed.js",
+    "admin:create": "node scripts/create-admin.js",
+    "test": "node scripts/test.js",
+    "test:unit": "node scripts/test.js unit",
+    "test:integration": "node scripts/test.js integration",
+    "files:reconcile": "node scripts/reconcile-files.js",
+    "backup": "node scripts/backup.js",
+    "restore:test": "node scripts/restore.js",
+    "verify:restore": "node scripts/verify-restore.js",
+    "format:check": "prettier --check \"src/**/*.js\" \"scripts/*.js\" \"tests/**/*.js\"",
+    "verify:performance": "node scripts/benchmark.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "express-mysql-session": "^3.0.3",
+    "express-rate-limit": "^8.0.0",
+    "express-session": "^1.18.2",
+    "file-type": "^21.0.0",
+    "helmet": "^8.1.0",
+    "multer": "^2.0.2",
+    "mysql2": "^3.14.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prettier": "^3.9.10",
+    "supertest": "^7.1.0"
+  }
+}
